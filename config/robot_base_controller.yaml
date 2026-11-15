@@ -1,0 +1,130 @@
+#
+# * @file            config/robot_base_controller.yaml
+# * @description     
+# * @author          rsazid99 <rsazid99@gmail.com>
+# * @createTime      2026-11-15 01:09:07
+# * @lastModified    2026-11-15 17:59:55
+# * Copyright (c) 2026 Sazid Rahman Simanto
+# * SPDX-License-Identifier: MIT
+#
+
+# Shared parameters for every node in the robot_base_controller bringup.
+
+base_controller:
+  ros__parameters:
+    wheel_ids: [1, 2, 3, 4]
+    wheel_directions: ["forward", "backward", "forward", "backward"]
+    wheel_radius: 0.05
+    wheel_track: 0.385
+    wheel_base: 0.30
+    # by-id paths are stable across replugs and reboots; the raw /dev/ttyACM*
+    # numbers depend on USB enumeration order.
+    device_paths:
+      - "/dev/serial/by-id/usb-WCH.CN_USB_Quad_Serial_BD6550ABCD-if00"  # front left
+      - "/dev/serial/by-id/usb-WCH.CN_USB_Quad_Serial_BD6550ABCD-if02"  # front right
+      - "/dev/serial/by-id/usb-WCH.CN_USB_Quad_Serial_BD6550ABCD-if04"  # rear left
+      - "/dev/serial/by-id/usb-WCH.CN_USB_Quad_Serial_BD6550ABCD-if06"  # rear right
+    feedback_rate_hz: 10.0
+    cmd_vel_timeout: 0.5
+    inter_cmd_gap_ms: 0
+    accel_rpm_per_sec: 200.0
+    max_rpm: 200.0
+    odom_frame: "odom"
+    base_frame: "base_link"
+    # odom_fusion owns odom -> base_link. Only enable this when running the
+    # base controller on its own without the fusion node.
+    publish_tf: false
+
+bno085_imu:
+  ros__parameters:
+    # Jetson Orin NX: header pins 3 (SDA) and 5 (SCL) are I2C bus 7.
+    i2c_bus: 7
+    i2c_address: 0x4A
+    max_i2c_transfer: 64
+    frame_id: "imu_link"
+    report_rate_hz: 100.0
+    poll_rate_hz: 400.0
+    # false -> rotation vector (magnetometer fused, absolute heading)
+    # true  -> game rotation vector (no magnetometer, immune to motor fields,
+    #          but the heading drifts slowly)
+    use_game_rotation_vector: false
+    publish_magnetometer: true
+    soft_reset: true
+    orientation_stddev: 0.02
+    angular_velocity_stddev: 0.01
+    linear_acceleration_stddev: 0.05
+
+odom_fusion:
+  ros__parameters:
+    odom_frame: "odom"
+    base_frame: "base_link"
+    publish_tf: true
+    publish_rate_hz: 100.0
+
+    use_imu_yaw: true
+    use_imu_gyro: true
+    # Skid steer wheels slip in turns, so the wheel yaw rate is not trusted.
+    # Enable this only if the IMU is unavailable.
+    use_wheel_angular: false
+
+    # Set to true when the IMU is mounted upside down.
+    invert_imu_yaw: false
+    imu_yaw_offset_deg: 0.0
+    zero_yaw_on_start: true
+
+    # Measurement noise (standard deviations)
+    wheel_linear_stddev: 0.05     # m/s
+    wheel_angular_stddev: 0.30    # rad/s
+    imu_gyro_stddev: 0.02         # rad/s
+    imu_yaw_stddev: 0.05          # rad
+
+    # Process noise (standard deviations per sqrt(second))
+    process_position_stddev: 0.02
+    process_yaw_stddev: 0.01
+    process_velocity_stddev: 0.5
+    process_omega_stddev: 1.0
+
+    # If an input goes quiet for longer than input_timeout, the velocity
+    # estimate is decayed toward zero instead of coasting on the motion model.
+    input_timeout: 1.0
+    stale_velocity_stddev: 0.5
+
+# Only used when the bringup is launched with flysky:=true (the default).
+# Launch with flysky:=false to run autonomously and leave cmd_vel to a planner.
+flysky_ibus_bridge:
+  ros__parameters:
+    # by-id path is stable across replugs; this adapter has landed on ttyACM6
+    # and ttyACM4 depending on USB enumeration order.
+    port: "/dev/serial/by-id/usb-1a86_USB_Single_Serial_5A99034077-if00"
+    baud: 115200
+
+    # Set to something like "cmd_vel_manual" to run the radio alongside an
+    # autonomous planner behind a twist mux. The bringup launch file overrides
+    # this via the flysky_cmd_vel_topic argument.
+    cmd_vel_topic: "cmd_vel"
+
+    # Zero based channel indices.
+    linear_channel: 1     # CH2, right stick up/down
+    angular_channel: 0    # CH1, right stick left/right
+    arm_channel: 4        # CH5 / VRA
+
+    max_linear: 0.4
+    max_angular: 0.6
+
+    invert_linear: false
+    invert_angular: true
+
+    use_arm_channel: true
+    arm_threshold: 1700
+
+    speed_scale_channel: 5
+    min_speed_scale: 0.5
+    max_speed_scale: 1.0
+
+    linear_accel: 2.0
+    angular_accel: 2.0
+
+    deadband: 40
+    timeout_sec: 0.3
+    publish_hz: 100.0
+    debug_channels: false

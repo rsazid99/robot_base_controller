@@ -1,0 +1,34 @@
+MIT License
+
+Copyright (c) 2026 Sazid Rahman Simanto
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------
+
+Third-party code
+
+The DDSM115 protocol layer (src/ddsm115_protocol.cpp,
+include/robot_base_controller/ddsm115_protocol.hpp) and the architecture of
+src/base_controller_node.cpp are derived from the
+robot_4wd_dds115_base_controller project by alduxvm
+(https://github.com/alduxvm/robot_4wd_dds115_base_controller), which declares
+the BSD license in its package manifest and is itself inspired by
+belovictor/ros_ddsm115_driver. The portions derived from that project remain
+under its BSD license and copyright.
